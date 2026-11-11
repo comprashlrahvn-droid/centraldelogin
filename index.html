@@ -200,6 +200,16 @@ const ICONES = {
   sign:'<path class="d" d="M5.6 2.8h7.9l4.1 4.1V12M5.6 2.8A1.6 1.6 0 0 0 4 4.4v15.1a1.6 1.6 0 0 0 1.6 1.6H12"/><path d="M13.5 2.8v4.1h4.1M7.4 10.6h6M7.4 14h3.4"/><path class="d" d="M13.2 20.4l.7-2.8 5.4-5.4a1.6 1.6 0 0 1 2.2 2.2l-5.4 5.4z"/><path d="M18.2 13.3l2.2 2.2"/>'
 };
 
+/* nomes antigos de ícones continuam funcionando; se faltar algum, o ícone é escolhido pelo nome do botão */
+ICONES.chart=ICONES.coins; ICONES.doc=ICONES.sign; ICONES.cash=ICONES.coins; ICONES.contract=ICONES.sign;
+ICONES.generic='<rect class="d" x="4" y="4" width="16" height="16" rx="4.5"/><path d="M8.5 12h7M12 8.5v7"/>';
+function iconeDe(s){
+  if(ICONES[s.icone]) return ICONES[s.icone];
+  const n=(s.nome||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const k=/contrat|\boc/.test(n)?'sign':/financ/.test(n)?'coins':/farma/.test(n)?'pill':/nutri/.test(n)?'leaf':/multi/.test(n)?'users':/pedido|compra|custo/.test(n)?'cart':'generic';
+  return ICONES[k];
+}
+
 /* ==========================================================
    2) TEMAS DO CALENDÁRIO DE CONSCIENTIZAÇÃO EM SAÚDE
    a = cor principal da campanha · b = secundária
@@ -261,7 +271,7 @@ function aviso(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTi
 /* ---------- botões ---------- */
 $('grid').innerHTML=SISTEMAS.map((s,i)=>
   `<a class="tile luz" style="--i:${i}" href="${s.url}" target="_blank" rel="noopener" data-url="${s.url}" data-i="${i}" title="${s.desc}">
-    <svg class="ti" viewBox="0 0 24 24">${ICONES[s.icone]}</svg><span class="n">${s.nome}</span><span class="key">${i+1}</span></a>`).join('');
+    <svg class="ti" viewBox="0 0 24 24">${iconeDe(s)}</svg><span class="n">${s.nome}</span><span class="key">${i+1}</span></a>`).join('');
 tiles.push(...document.querySelectorAll('.tile'));
 let ultimo=-1; try{ultimo=+(localStorage.getItem('ultimo')??-1);}catch(e){}
 if(tiles[ultimo]){ tiles[ultimo].classList.add('rec'); tiles[ultimo].insertAdjacentHTML('afterbegin','<i class="dot" title="Último sistema acessado"></i>'); }
